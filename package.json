@@ -1,0 +1,30 @@
+{
+  "name": "0xauto-okx-mcp-server",
+  "version": "1.0.0",
+  "description": "MCP Server for OKX V5 API",
+  "main": "src/index.js",
+  "scripts": {
+    "start": "node src/index.js",
+    "dev": "nodemon src/index.js"
+  },
+  "keywords": [
+    "okx",
+    "mcp",
+    "api",
+    "trading",
+    "bot",
+    "agent"
+  ],
+  "author": "AI Assistant",
+  "license": "MIT",
+  "dependencies": {
+    "@modelcontextprotocol/sdk": "^1.11.4",
+    "axios": "^1.6.0",
+    "crypto-js": "^4.2.0",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2"
+  },
+  "devDependencies": {
+    "nodemon": "^3.0.1"
+  }
+}
