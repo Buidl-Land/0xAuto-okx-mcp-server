@@ -7,6 +7,7 @@ const config = {
     passphrase: process.env.OKX_PASSPHRASE,
     baseUrl: process.env.OKX_API_BASE_URL || 'https://www.okx.com',
     simulatedTrading: process.env.SIMULATED_TRADING || '0', // '0' for false, '1' for true
+    dexApiBase: process.env.OKX_DEX_API_BASE || 'https://web3.okx.com/api/v5/dex'
   },
   server: {
     port: process.env.SERVER_PORT || 3000,

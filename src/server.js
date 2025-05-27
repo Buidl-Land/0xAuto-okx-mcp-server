@@ -3,6 +3,7 @@ const { registerAccountTools } = require('./tools/accountTools.js');
 const { registerFundingTools } = require('./tools/fundingTools.js');
 const { registerMarketTools } = require('./tools/marketTools.js');
 const { registerTradeTools } = require('./tools/tradeTools.js');
+const { registerOkxDexTools } = require('./tools/dexTools.js');
 
 /**
  * 创建并配置MCP服务器
@@ -16,6 +17,7 @@ function createServer() {
   registerFundingTools(server);
   registerMarketTools(server);
   registerTradeTools(server);
+  registerOkxDexTools(server);
   
   return server;
 }
