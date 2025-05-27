@@ -12,10 +12,10 @@ const { mcpErrorResponse } = require('./utils/mcpResponse');
 const app = express();
 app.use(express.json());
 
-// 使用原有的请求日志中间件
+// Use existing request logger middleware
 app.use(requestLogger);
 
-// 创建MCP服务器
+// Create MCP server
 const server = createServer();
 
 const transports = {
@@ -23,61 +23,61 @@ const transports = {
   sse: {}
 };
 
-// 处理客户端到服务器的POST请求
+// Handle client-to-server POST requests
 app.post('/mcp', async (req, res) => {
-  // 添加CORS头
+  // Add CORS headers
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
   res.setHeader('Access-Control-Allow-Headers', 'Content-Type, mcp-session-id');
   res.setHeader('Access-Control-Expose-Headers', 'mcp-session-id');
   
-  // 检查是否存在会话ID
+  // Check if session ID exists
   const sessionId = req.headers['mcp-session-id'];
   let transport;
 
   try {
     if (sessionId && transports.streamable[sessionId]) {
-      // 重用现有的传输
+      // Reuse existing transport
       transport = transports.streamable[sessionId];
-      console.log(`处理MCP请求，会话ID: ${transport.sessionId || '无'}`);
+      console.log(`Processing MCP request, session ID: ${transport.sessionId || 'none'}`);
       await transport.handleRequest(req, res, req.body);
     } else if (!sessionId && isInitializeRequest(req.body)) {
-      // 新的初始化请求
-      console.log("收到初始化请求...");
+      // New initialization request
+      console.log("Received initialization request...");
       transport = new StreamableHTTPServerTransport({
         sessionIdGenerator: () => randomUUID(),
         onsessioninitialized: (sessionId) => {
-          // 按会话ID存储传输
-          console.log(`初始化会话ID: ${sessionId}`);
+          // Store transport by session ID
+          console.log(`Initialized session ID: ${sessionId}`);
           transports.streamable[sessionId] = transport;
         }
       });
 
-      // 传输关闭时进行清理
+      // Clean up when transport closes
       transport.onclose = () => {
         if (transport.sessionId) {
-          console.log(`关闭会话: ${transport.sessionId}`);
+          console.log(`Closing session: ${transport.sessionId}`);
           delete transports.streamable[transport.sessionId];
         }
       };
 
-      // 连接到MCP服务器
+      // Connect to MCP server
       await server.connect(transport);
-      console.log("已连接到MCP服务器");
+      console.log("Connected to MCP server");
       
-      // 处理请求
-      console.log(`处理MCP请求，会话ID: ${transport.sessionId || '无'}`);
+      // Handle request
+      console.log(`Processing MCP request, session ID: ${transport.sessionId || 'none'}`);
       await transport.handleRequest(req, res, req.body);
     } else {
-      // 无效请求
-      console.log("收到无效请求: 缺少会话ID");
+      // Invalid request
+      console.log("Received invalid request: Missing session ID");
       res.status(400).json(mcpErrorResponse(
         'MCP_BAD_REQUEST',
         'No valid session ID provided'
       ));
     }
   } catch (error) {
-    console.error("MCP请求处理错误:", error);
+    console.error("MCP request processing error:", error);
     if (!res.headersSent) {
       res.status(500).json(mcpErrorResponse(
         'MCP_SERVER_ERROR',
@@ -87,7 +87,7 @@ app.post('/mcp', async (req, res) => {
   }
 });
 
-// OPTIONS请求处理 - 用于CORS预检请求
+// OPTIONS request handling - for CORS preflight requests
 app.options('/mcp', (req, res) => {
   res.setHeader('Access-Control-Allow-Origin', '*');
   res.setHeader('Access-Control-Allow-Methods', 'GET, POST, OPTIONS, DELETE');
@@ -96,27 +96,27 @@ app.options('/mcp', (req, res) => {
   res.status(200).end();
 });
 
-// GET请求处理
+// GET request handling
 app.get('/mcp', (req, res) => {
-  console.log('收到GET MCP请求');
+  console.log('Received GET MCP request');
   res.writeHead(405).end(JSON.stringify(mcpErrorResponse(
     'METHOD_NOT_ALLOWED',
     'Method not allowed.'
   )));
 });
 
-// DELETE请求处理
+// DELETE request handling
 app.delete('/mcp', (req, res) => {
-  console.log('收到DELETE MCP请求');
+  console.log('Received DELETE MCP request');
   res.writeHead(405).end(JSON.stringify(mcpErrorResponse(
     'METHOD_NOT_ALLOWED',
     'Method not allowed.'
   )));
 });
 
-// 为旧客户端提供的SSE端点
+// SSE endpoint for legacy clients
 app.get('/sse', async (req, res) => {
-  // 为旧客户端创建SSE传输
+  // Create SSE transport for legacy clients
   const transport = new SSEServerTransport('/messages', res);
   transports.sse[transport.sessionId] = transport;
   
@@ -127,7 +127,7 @@ app.get('/sse', async (req, res) => {
   await server.connect(transport);
 });
 
-// 为旧客户端提供的消息端点
+// Message endpoint for legacy clients
 app.post('/messages', async (req, res) => {
   const sessionId = req.query.sessionId;
   const transport = transports.sse[sessionId];
@@ -141,7 +141,7 @@ app.post('/messages', async (req, res) => {
   }
 });
 
-// 添加健康检查端点
+// Add health check endpoint
 app.get('/health', (req, res) => {
   res.status(200).json({ status: 'UP', timestamp: new Date().toISOString() });
 });
@@ -154,8 +154,8 @@ app.use('*', (req, res) => {
   ));
 });
 
-// 使用原有的错误处理中间件
+// Use existing error handling middleware
 app.use(globalErrorHandler);
 
-// 导出app实例供启动脚本使用
+// Export app instance for startup script
 module.exports = app;

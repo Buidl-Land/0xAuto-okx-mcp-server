@@ -1,111 +1,158 @@
-# 0xAuto OKX MCP 服务器
+# 0xAuto OKX MCP Server
 
-该服务器基于Model Context Protocol (MCP)协议，为OKX V5 API提供了工具接口层，
-为AI代理提供简化的OKX交易和账户功能访问。
+This server is based on the Model Context Protocol (MCP), providing a tool interface layer for OKX V5 API and OKX DEX API,
+offering AI agents simplified access to OKX exchange (CEX) and decentralized exchange (DEX) functionalities.
 
-## 功能特点
+## Features
 
-- 隐藏复杂的OKX API认证和签名逻辑
-- 提供标准的MCP工具接口
-- 涵盖核心功能：
-    - 账户信息（余额、持仓、历史）
-    - 市场数据（行情、K线）
-    - 交易操作（下单、撤单、订单管理）
-    - 资金操作（充值地址、提币）
-- 标准化的JSON响应和错误处理
-- 支持MCP协议的会话管理和流式传输
+### CEX (Centralized Exchange) Features
+- Hides complex OKX API authentication and signature logic
+- Provides standard MCP tool interfaces
+- Covers core functionalities:
+    - Account information (balances, positions, history)
+    - Market data (quotes, K-lines)
+    - Trading operations (place orders, cancel orders, order management)
+    - Funding operations (deposit addresses, withdrawals)
 
-## 系统要求
+### DEX (Decentralized Exchange) Features
+- Provides access to OKX DEX aggregator
+- Supports multi-chain transactions and token exchanges
+- Covers functionalities:
+    - Token quote retrieval
+    - Token price queries and K-line data
+    - On-chain balance queries
+    - Token authorization operations
+    - Intra-chain and cross-chain swaps
 
-- Node.js (v16或更高版本)
+- Standardized JSON responses and error handling
+- Support for MCP protocol session management and streaming
+
+## System Requirements
+
+- Node.js (v16 or higher)
 - pnpm
 
-## 安装步骤
+## Installation Steps
 
-1. **安装依赖：**
+1. **Install dependencies:**
    ```bash
    pnpm install
    ```
 
-2. **设置环境变量：**
-   创建一个`.env`文件，复制`.env.example`的内容：
+2. **Set up environment variables:**
+   Create a `.env` file by copying the contents from `.env.example`:
    ```bash
    cp .env.example .env
    ```
-   编辑`.env`文件，填入您的OKX API凭证和其他设置：
+   Edit the `.env` file and fill in your OKX API credentials and other settings:
    ```
-   OKX_API_KEY=你的_okx_api_key
-   OKX_SECRET_KEY=你的_okx_secret_key
-   OKX_PASSPHRASE=你的_okx_api_密码
+   # OKX API Configuration
+   OKX_API_KEY=your_okx_api_key
+   OKX_SECRET_KEY=your_okx_secret_key
+   OKX_PASSPHRASE=your_okx_api_password
    OKX_API_BASE_URL=https://www.okx.com
-   # 模拟交易：0为实盘，1为模拟盘
+   OKX_DEX_API_BASE=https://web3.okx.com/api/v5/dex
+   
+   # Simulated trading: 0 for live trading, 1 for demo account
    SIMULATED_TRADING=0
    
    SERVER_PORT=3000
    LOG_LEVEL=info
    ```
-   **重要提示：** 确保您的OKX API Key拥有必要的权限（读取、交易）。
+   **Important note:** Ensure your OKX API Key has the necessary permissions (read, trade).
 
-## 运行服务器
+## Running the Server
 
 ```bash
 pnpm start
-# 或者开发模式
+# or development mode
 pnpm dev
 ```
 
-服务器将在`SERVER_PORT`指定的端口上启动（默认3000）。
+The server will start on the port specified by `SERVER_PORT` (default 3000).
 
-## MCP工具列表
+## MCP Tool List
 
-服务器实现了以下MCP工具：
+The server implements the following MCP tools:
 
-### 账户相关工具
-- `okx_get_account_info` - 获取账户信息
-- `okx_get_positions` - 获取持仓信息
-- `okx_get_balance` - 获取账户余额
+### CEX (Centralized Exchange) Tools
 
-### 交易相关工具
-- `okx_place_order` - 下单交易
-- `okx_cancel_order` - 撤销订单
-- `okx_get_orders` - 获取订单信息
-- `okx_get_order_history` - 获取历史订单
+#### Account-related Tools
+- `okx_get_account_info` - Get account information
+- `okx_get_positions` - Get position information
+- `okx_get_balance` - Get account balance
 
-### 市场数据工具
-- `okx_get_ticker` - 获取行情数据
-- `okx_get_kline` - 获取K线数据
-- `okx_get_instruments` - 获取产品列表
+#### Trading-related Tools
+- `okx_place_order` - Place trade order
+- `okx_cancel_order` - Cancel order
+- `okx_get_orders` - Get order information
+- `okx_get_order_history` - Get historical orders
 
-### 资金相关工具
-- `okx_get_deposit_address` - 获取充值地址
-- `okx_get_deposit_history` - 获取充值记录
-- `okx_withdraw` - 提币
+#### Market Data Tools
+- `okx_get_ticker` - Get market quotes
+- `okx_get_kline` - Get K-line data
+- `okx_get_instruments` - Get product list
 
-## 项目结构
+#### Funding-related Tools
+- `okx_get_deposit_address` - Get deposit address
+- `okx_get_deposit_history` - Get deposit records
+- `okx_withdraw` - Withdraw funds
+
+### DEX (Decentralized Exchange) Tools
+
+#### Quotes and Market Data
+- `okx_get_quote` - Get OKX DEX aggregator quotes (supports slippage settings)
+- `okx_get_supported_chains` - Get chains supported by OKX DEX
+- `okx_get_token_list` - Get token list supported by OKX DEX
+- `okx_get_price` - Get latest price of tokens on OKX DEX
+- `okx_get_kline` - Get K-line data for tokens on OKX DEX (supports different time granularities)
+
+#### Trading-related Tools
+- `okx_approve_transaction` - Get OKX DEX authorization transaction information
+- `okx_swap` - Initiate OKX DEX swap
+- `okx_cross_chain_swap` - Initiate OKX DEX cross-chain swap
+
+#### Balance Queries
+- `okx_get_balance` - Get all token balances for a wallet address on a specified chain
+
+## Project Structure
 
 ```
 src/
-├── app.js              # Express应用配置
-├── index.js            # 服务器启动入口
-├── server.js           # MCP服务器创建和工具注册
-├── config/             # 配置文件
-├── controllers/        # 控制器逻辑
-├── middleware/         # 中间件
-├── services/           # 服务层
-├── tools/              # MCP工具实现
-│   ├── accountTools.js
-│   ├── fundingTools.js
-│   ├── marketTools.js
-│   └── tradeTools.js
-└── utils/              # 工具函数
+├── app.js              # Express application configuration
+├── index.js            # Server startup entry
+├── server.js           # MCP server creation and tool registration
+├── config/             # Configuration files
+├── controllers/        # Controller logic
+├── middleware/         # Middleware
+├── services/           # Service layer
+│   ├── okxService.js   # OKX CEX API service
+│   └── okxDexService.js# OKX DEX API service
+├── tools/              # MCP tool implementation
+│   ├── accountTools.js # CEX account tools
+│   ├── fundingTools.js # CEX funding tools
+│   ├── marketTools.js  # CEX market tools
+│   ├── tradeTools.js   # CEX trading tools
+│   ├── dexTools.js     # DEX tool registration
+│   └── dex/            # DEX tool files
+│       ├── quoteTool.js         # Quote tool
+│       ├── supportedChainsTool.js# Supported chains tool
+│       ├── tokenListTool.js     # Token list tool
+│       ├── priceTool.js         # Price tool
+│       ├── klineTool.js         # K-line tool
+│       ├── balanceTool.js       # Balance tool
+│       ├── approveTool.js       # Approval tool
+│       ├── swapTool.js          # Swap tool
+│       └── crossChainSwapTool.js# Cross-chain swap tool
+└── utils/              # Utility functions
 ```
 
-## MCP客户端接入
+## MCP Client Connection
 
-MCP客户端可以通过以下端点与服务器通信：
+MCP clients can communicate with the server through the following endpoints:
 
-- `/mcp` - 主要的MCP请求端点
-- `/sse` - 向后兼容的SSE端点
-- `/messages` - 向后兼容的消息端点
+- `/mcp` - Main MCP request endpoint
+- `/sse` - Backward-compatible SSE endpoint
+- `/messages` - Backward-compatible message endpoint
 
-使用标准MCP会话管理，包括会话ID和初始化请求。
+Uses standard MCP session management, including session ID and initialization requests.

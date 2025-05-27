@@ -1,63 +1,63 @@
 const marketController = require('../controllers/marketController');
 
 /**
- * 注册市场数据相关工具
- * @param {import('@modelcontextprotocol/sdk/server/mcp.js').McpServer} server MCP服务器实例
+ * Register market data related tools
+ * @param {import('@modelcontextprotocol/sdk/server/mcp.js').McpServer} server MCP server instance
  */
 function registerMarketTools(server) {
-  // 获取产品行情数据工具
+  // Get product ticker data tool
   server.tool(
     "okx_get_ticker",
-    "获取产品行情数据",
+    "Get Product Ticker Data",
     {
-      instId: { type: "string", description: "产品ID，如BTC-USDT", required: true }
+      instId: { type: "string", description: "Product ID, e.g. BTC-USDT", required: true }
     },
     async ({ instId }) => {
       try {
         const result = await marketController.getTicker({ instId });
         return result;
       } catch (error) {
-        console.error('获取行情数据错误:', error);
-        throw new Error(`获取行情数据失败: ${error.message || '未知错误'}`);
+        console.error('Get ticker data error:', error);
+        throw new Error(`Get ticker data failed: ${error.message || 'Unknown error'}`);
       }
     }
   );
 
-  // 获取K线数据工具
+  // Get K-line data tool
   server.tool(
     "okx_get_kline",
-    "获取K线数据",
+    "Get K-line Data",
     {
-      instId: { type: "string", description: "产品ID，如BTC-USDT", required: true },
-      bar: { type: "string", description: "时间粒度，如1m/1h/1d等", required: true },
-      limit: { type: "string", description: "返回结果的数量，最大100" }
+      instId: { type: "string", description: "Product ID, e.g. BTC-USDT", required: true },
+      bar: { type: "string", description: "Time granularity, e.g. 1m/1h/1d", required: true },
+      limit: { type: "string", description: "Number of results to return, max 100" }
     },
     async ({ instId, bar, limit }) => {
       try {
         const result = await marketController.getKline({ instId, bar, limit });
         return result;
       } catch (error) {
-        console.error('获取K线数据错误:', error);
-        throw new Error(`获取K线数据失败: ${error.message || '未知错误'}`);
+        console.error('Get K-line data error:', error);
+        throw new Error(`Get K-line data failed: ${error.message || 'Unknown error'}`);
       }
     }
   );
 
-  // 获取可交易产品列表工具
+  // Get tradable instruments list tool
   server.tool(
     "okx_get_instruments",
-    "获取可交易产品列表",
+    "Get Tradable Instruments List",
     {
-      instType: { type: "string", description: "产品类型，SPOT, SWAP, FUTURES, OPTION等", required: true },
-      uly: { type: "string", description: "标的指数，如BTC-USD" }
+      instType: { type: "string", description: "Instrument type, SPOT, SWAP, FUTURES, OPTION, etc.", required: true },
+      uly: { type: "string", description: "Underlying index, e.g. BTC-USD" }
     },
     async ({ instType, uly }) => {
       try {
         const result = await marketController.getInstruments({ instType, uly });
         return result;
       } catch (error) {
-        console.error('获取产品列表错误:', error);
-        throw new Error(`获取产品列表失败: ${error.message || '未知错误'}`);
+        console.error('Get instruments list error:', error);
+        throw new Error(`Get instruments list failed: ${error.message || 'Unknown error'}`);
       }
     }
   );

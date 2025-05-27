@@ -6,12 +6,12 @@ const PORT = config.server.port;
 
 const server = app.listen(PORT, (error) => {
   if (error) {
-    console.error('启动服务器失败:', error);
+    console.error('Server startup failed:', error);
     process.exit(1);
   }
-  console.log(`0xauto MCP 服务器运行在端口 ${PORT}`);
+  console.log(`0xauto MCP server running on port ${PORT}`);
   console.log(`OKX API Base URL: ${config.okx.baseUrl}`);
-  console.log(`模拟交易模式: ${config.okx.simulatedTrading === '1' ? '已启用' : '已禁用'}`);
+  console.log(`Simulated trading mode: ${config.okx.simulatedTrading === '1' ? 'Enabled' : 'Disabled'}`);
 });
 
 process.on('SIGTERM', () => {

@@ -3,19 +3,21 @@ const { registerAccountTools } = require('./tools/accountTools.js');
 const { registerFundingTools } = require('./tools/fundingTools.js');
 const { registerMarketTools } = require('./tools/marketTools.js');
 const { registerTradeTools } = require('./tools/tradeTools.js');
+const { registerOkxDexTools } = require('./tools/dexTools.js');
 
 /**
- * 创建并配置MCP服务器
- * @returns {McpServer} 配置好的MCP服务器实例
+ * Create and configure MCP server
+ * @returns {McpServer} Configured MCP server instance
  */
 function createServer() {
   const server = new McpServer();
   
-  // 注册所有工具
+  // Register all tools
   registerAccountTools(server);
   registerFundingTools(server);
   registerMarketTools(server);
   registerTradeTools(server);
+  registerOkxDexTools(server);
   
   return server;
 }
